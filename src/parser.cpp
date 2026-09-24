@@ -1,23 +1,32 @@
-// Include our parser interface so main can instantiate CodeParser.
+// Include our own matching header file so the compiler links declarations to definitions.
 #include "parser/parser.hpp"
 
-// Include standard I/O for printing startup status.
+// Include the lexer header to scan tokens.
+#include "parser/Lexer.hpp"
+
+// <iostream> provides standard input/output stream capabilities (like printing to terminal).
 #include <iostream>
 
-// 'main' is the required entry point function for every C++ program.
-// It returns an integer status code to the Operating System (0 = success).
-int main() {
-    std::cout << "=== Code Structural Parser v0.1.0 ===\n";
+namespace parser {
 
-    // Create a local string variable holding C++ code to test.
-    std::string dummy_code = "int main() { return 0; }";
+// Constructor definition.
+// ': m_source(source)' is a "Member Initializer List". It directly assigns the 
+// parameter 'source' to the member variable 'm_source' before the body runs.
+CodeParser::CodeParser(std::string_view source) 
+    : m_source(source) {}
 
-    // Instantiate an object of type CodeParser on the stack, passing dummy_code to constructor.
-    parser::CodeParser parser(dummy_code);
-
-    // Call the parse method on our object instance.
-    parser.parse();
-
-    // Returning 0 signals to PowerShell/Windows that the program executed without errors.
-    return 0;
+// Implementation of the parse method declared in parser.hpp.
+void CodeParser::parse() {
+    // 'std::cout' streams text to standard output.
+    // 'm_source.size()' returns the length of the string view in bytes.
+    // '\n' creates a newline (faster than std::endl because it doesn't force a buffer flush).
+    std::cout << "Initializing parser for " << m_source.size() << " bytes of source code...\n";
+    
+    // Lexical analysis logic will be added here next.
+    Lexer lexer(m_source);
+    auto tokens = lexer.tokenize_all();
+    
+    std::cout << "Scanned " << tokens.size() << " tokens successfully.\n";
 }
+
+} // namespace parser
