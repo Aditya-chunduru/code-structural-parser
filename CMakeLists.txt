@@ -19,6 +19,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(SOURCES
     src/main.cpp
     src/parser.cpp
+    src/lexer.cpp
+    src/tokenstream.cpp
 )
 
 # Tell CMake to compile those sources into an executable binary named 'code_structural_parser'
