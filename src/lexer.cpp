@@ -1,4 +1,4 @@
-#include "parser/Lexer.hpp"
+#include "lexer.hpp"
 #include <cctype>
 
 namespace parser {
