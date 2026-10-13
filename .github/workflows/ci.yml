@@ -1,0 +1,63 @@
+# ==============================================================================
+# GitHub Actions CI/CD Pipeline for C++ Code Structural Parser
+# ==============================================================================
+# This workflow automatically triggers on code pushes and pull requests,
+# sets up the C++ development environment, installs dependencies, builds the 
+# project, and validates your YAML configuration files.
+# ==============================================================================
+
+name: C++ Parser CI
+
+# Define when this workflow runs automatically
+on:
+  push:
+    branches: [ main, feature/lexer-tokenizer ]
+  pull_request:
+    branches: [ main, feature/lexer-tokenizer ]
+
+jobs:
+  build-and-validate:
+    name: Build & Validate on Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Pull your repository code onto the virtual runner
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Install essential build tools, CMake, and the yaml-cpp development library
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake libyaml-cpp-dev python3-yaml
+
+      # 3. Validate that all YAML configuration files are syntactically correct
+      - name: Validate YAML Configuration Files
+        run: |
+          echo "Checking YAML syntax for configuration files..."
+          python3 -c "
+          import yaml, glob
+          for f in glob.glob('*.yml') + glob.glob('config/*.yml'):
+              try:
+                  with open(f, 'r') as file:
+                      yaml.safe_load(file)
+                  print(f'  [OK] {f} is valid YAML')
+              except Exception as e:
+                  print(f'  [FAIL] {f}: {e}')
+                  exit(1)
+          "
+
+      # 4. Build the C++ project using CMake
+      - name: Configure and Build C++ Project
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --parallel 4
+
+      # 5. Run test suite (if test executable is built)
+      - name: Run Tests
+        run: |
+          if [ -f "./build/parser_tests" ]; then
+            ./build/parser_tests
+          else
+            echo "No test executable found yet; skipping execution step."
+          fi
