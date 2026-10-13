@@ -1,0 +1,44 @@
+# Name displayed on the GitHub Actions dashboard
+name: C++ Code Structural Parser Rules
+
+# ------------------------------------------------------------------------------
+# TRIGGERS: When should GitHub automatically run this script?
+# ------------------------------------------------------------------------------
+on:
+  # Run automatically whenever you push code changes to these branches
+  push:
+    branches: [ main, feature/lexer-tokenizer ]
+
+  # Run automatically whenever someone opens/updates a Pull Request against these branches
+  pull_request:
+    branches: [ main, feature/lexer-tokenizer ]
+
+# ------------------------------------------------------------------------------
+# JOBS: What automated tasks need to take place?
+# ------------------------------------------------------------------------------
+jobs:
+  run-parser:
+    name: Run C++ Structural Parser
+    
+    # Spin up a fresh Ubuntu Linux server in the cloud for this build
+    runs-on: ubuntu-latest
+
+    # --------------------------------------------------------------------------
+    # STEPS: The sequential execution list run on the fresh server
+    # --------------------------------------------------------------------------
+    steps:
+      # Step 1: Download a copy of your GitHub repository onto the virtual machine
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # Step 2: Install the C++ compiler (GCC) and yaml-cpp library onto the machine
+      - name: Install Build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libyaml-cpp-dev
+
+      # Step 3: Run terminal commands to build your project and execute tests
+      - name: Run Parser Build & Execution
+        run: |
+          echo "Building and testing C++ AST Parser..."
+          # Insert your actual build and test commands below (e.g., cmake, g++, or test scripts)
